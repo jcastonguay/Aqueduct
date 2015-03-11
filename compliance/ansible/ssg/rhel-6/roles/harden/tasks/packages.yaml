@@ -15,12 +15,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ---
-- name: "CCE-27024-9,CCE-26940-7,CCE-27626-1: package_aide_installed,package_screen_installed,install_openswan"
-  action: "{{os_packager}} name={{item}}"
-  with_items:
-    - aide
-    - screen
-    - openswan
+#- name: CCE-27024 package_aide_installed #"CCE-27024-9,CCE-26940-7,CCE-27626-1: package_aide_installed,package_screen_installed,install_openswan"
+#  action: "{{os_packager}} name={{item}}"
+#  with_items:
+#    - aide
+#    - screen
+#    - openswan
 
 - name: "CCE-26444-0: package_iptables_installed, Redhat"
   yum: "name=iptables"

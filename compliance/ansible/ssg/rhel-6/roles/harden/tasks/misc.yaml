@@ -15,15 +15,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ---
-#Various one shot changes
-- name: "CCE-26780-7: postfix_network_listening"
-  lineinfile:
-    dest=/etc/postfix/main.cf
-    line=inet_interfaces=localhost
-    regexp=^inet_interfaces
-  notify:
-    restart postfix
-
 
 - name: "CCE-26855-7: securetty_root_login_console_only"
   replace:
@@ -47,39 +38,26 @@
     dest=/etc/sysconfig/init
     line='PROMPT=no'
     regexp='^#*PROMPT'
+  when: ansible_os_family == 'RedHat'
 
-- name: "CCE-26785-6: check for enable_auditd_bootloader"
-  shell: "grep   -E '^[[:blank:]]+kernel' /boot/grub/grub.conf | grep -q -v 'audit=1'"
-  register: no_enable_auditd_bootloader
-  failed_when: "no_enable_auditd_bootloader.stderr"
-  #ignore_errors: True
-  changed_when: False
-
-- name: "CCE-26785-6: enable_auditd_bootloader"
-  #TODO: fix, using replace results in python inifinite re loop.
-  #This ends up triggering a change every time.
-  command: perl -pi -e '/audit=1/ or s/(^[ \t]*kernel.*)/\1 audit=1/' grub.conf
-    chdir=/boot/grub
-  when: no_enable_auditd_bootloader|changed and ansible_os_family == 'RedHat' and no_enable_auditd_bootloader.rc == 0
-
-- name: "CCE-26444-0: set_iptables_default_rule"
+- name: "CCE-26444-0: set_iptables_v4_default_rule"
   template:
-    dest=/etc/sysconfig/iptables
+    dest=/etc/iptables/rules.v4
     src="{{iptables_template}}"
   notify: restart iptables
-  when: ansible_os_family == 'RedHat' and iptables_provision
+  when: ansible_os_family == 'Debian' and iptables_provision
   tags: iptables
   
 - name: "CCE-26444-0: set_iptables_default_rule, started"
   service:
-    name=iptables
+    name=iptables-persistent
     state=started
     enabled=yes
   when: iptables_provision
 
 - name: "CCE-27031-4: umask_for_daemons"
   lineinfile:
-    dest=/etc/init.d/functions
+    dest=/etc/init.d/rc
     line="umask 027"
     regexp="^ *umask"
 

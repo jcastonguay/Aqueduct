@@ -25,7 +25,7 @@
     - net.bridge.bridge-nf-call-iptables.*
     - net.bridge.bridge-nf-call-arptables.*
   notify: reload sysctl
-  when: ansible_os_family == 'RedHat'
+#  when: ansible_os_family == 'RedHat'
  
 - name: "CCE-27007-4: enable_execshield"
   lineinfile:
@@ -138,3 +138,22 @@
     regexp='net.ipv6.conf.default.accept_redirects'
     state=present
   notify: reload sysctl
+
+
+
+- name: "Turn on SYN cookies"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv4.tcp_syncookies = 1'
+    regexp='net.ipv4.tcp_syncookies'
+    state=present
+  notify: reload sysctl
+
+- name: "Turn off Magic SysReq"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='kernel.sysrq=0'
+    regexp='kernel.sysrq'
+    state=present
+  notify: reload sysctl
+

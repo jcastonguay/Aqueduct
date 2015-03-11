@@ -23,14 +23,15 @@
   tags: packages
 - include: modules.yaml
   tags: modules
-- include: ssh.yaml
-  tags: ssh
+#- include: ssh.yaml
+#  tags: ssh
 - include: login.yaml
   tags: login
 - include: accounts.yaml
   tags: accounts
-- include: pam.yaml
-  tags: pam
+# TODO: fix for debian
+#- include: pam.yaml
+#  tags: pam
 - include: sysctl.yaml
   tags: sysctl
 - include: misc.yaml

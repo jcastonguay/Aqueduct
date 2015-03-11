@@ -16,26 +16,25 @@
 
 ---
 #This is all RedHat specific
-- name: "pam: remove authconfig"
-  yum: name=authconfig state=absent
-  tags: packages
+#- name: "pam: remove authconfig"
+#  yum: name=authconfig state=absent
+#  tags: packages
 
 - name: "CCE-27038-9: no_empty_passwords"
   replace:
     dest="{{item}}"
-    regexp='nullok'
+    regexp='nullok_secure'
   with_items:
-    - /etc/pam.d/system-auth
+    - /etc/pam.d/common-auth
 
 - name: "CCE-26844-1,CCE-27110-6,CCE-27215-3: accounts_passwords_pam_faillock_deny,deny_password_attempts_unlock_time,accounts_passwords_pam_fail_interval part one"
   lineinfile:
     dest="{{item}}"
     state=present
     line="auth [default=die] pam_faillock.so authfail deny=3 unlock_time=604800 fail_interval=900"
-    insertafter='^auth *sufficient *pam_unix.so'
+    insertafter='^auth *pam_unix.so'
   with_items:
-    - /etc/pam.d/system-auth
-    - /etc/pam.d/password-auth
+    - /etc/pam.d/common-auth
 
 - name: "CCE-26844-1,CCE-27110-6,CCE-27215-3: accounts_passwords_pam_faillock_deny,deny_password_attempts_unlock_time,accounts_passwords_pam_fail_interval part two"
   lineinfile:
@@ -44,15 +43,15 @@
     line="auth required pam_faillock.so authsucc deny=3 unlock_time=604800 fail_interval=900"
     insertafter='^auth \[default=die\] pam_faillock.so authfail deny=3 unlock_time=604800 fail_interval=900'
   with_items:
-    - /etc/pam.d/system-auth
-    - /etc/pam.d/password-auth
+    - /etc/pam.d/common-auth
 
 - name: "CCE-26741-9: accounts_password_reuse_limit"
   lineinfile:
-    dest=/etc/pam.d/system-auth
+    dest=/etc/pam.d/common-password
     state=present
     backrefs=yes
     line="password    sufficient    pam_unix.so \\1 remember=24"
+password	[success=1 default=ignore]	pam_unix.so obscure sha512
     regexp='^password *sufficient *pam_unix.so(([^ ]*( (?!remember=24).)+[^ \n]*)*)$'
   
 - name: "CCE-27291-4: display_login_attempts"

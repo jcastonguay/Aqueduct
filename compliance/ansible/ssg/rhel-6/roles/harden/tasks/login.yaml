@@ -17,9 +17,9 @@
 ---
 - name: "CCE-27002-5: accounts_password_minlen_login_defs"
   lineinfile:
-    dest=/etc/login.defs
-    line='PASS_MIN_LEN 14'
-    regexp='^PASS_MIN_LEN'
+    dest=/etc/pam.d/common-password
+    line='password        requisite                       pam_cracklib.so retry=3 minlen=14 difok=3'
+    regexp='minlen'
 
 - name: "CCE-27013-2: accounts_minimum_age_login_defs"
   lineinfile:
@@ -39,12 +39,12 @@
     line='INACTIVE=35'
     regexp='INACTIVE'
 
-- name: "CCE-27034-8: accounts_umask_cshrc"
-  lineinfile:
-    dest=/etc/csh.cshrc
-    line="       umask 077"
-    regexp='^ *umask *(002|077)'
-    backup=yes
+#- name: "CCE-27034-8: accounts_umask_cshrc"
+#  lineinfile:
+#    dest=/etc/csh.cshrc
+#    line="       umask 077"
+#    regexp='^ *umask *(002|077)'
+#    backup=yes
 
 - name: "CCE-26669-2: accounts_umask_etc_profile"
   lineinfile:
@@ -55,7 +55,7 @@
 
 - name: "CCE-26917-5: accounts_umask_bashrc"
   lineinfile:
-    dest=/etc/bashrc
+    dest=/etc/bash.bashrc
     line="       umask 077"
     regexp='^ *umask *(002|077)'
     backup=yes
